@@ -98,5 +98,4 @@ function parse(css){
     console.log(render(groupDefs));
 }
 
-// parse(fs.readFileSync('../yuan-pay/www/build/index.css'));
 parse(fs.readFileSync('./test.css'));
