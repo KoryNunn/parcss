@@ -1,5 +1,3 @@
-var fs = require('fs');
-
 function parseStatement(statement, groupDef){
     statement = statement.trim();
     if(!statement){
@@ -44,19 +42,23 @@ function parseKeyframes(css, groupDefs){
 
     css = css.replace(keyframesRegex, '');
 
-    groupDefs['@keyframes'] = keyframes;
+    if(keyframes){
+        groupDefs['@keyframes'] = keyframes;
+    }
 
     return css;
 }
 
-function parseMedia(css, groupDefs){
-    var keyframesRegex = /(@.*?media.*?\w+.*?{(?:.|\n)*?}(?:\s|\n)})/g;
+function parseMediaQueries(css, groupDefs){
+    var mediaQueryRegex = /(@.*?media.*?\w+.*?{(?:.|\n)*?}(?:\s|\n)})/g;
 
-    var keyframes = css.match(keyframesRegex);
+    var mediaQueries = css.match(mediaQueryRegex);
 
-    css = css.replace(keyframesRegex, '');
+    css = css.replace(mediaQueryRegex, '');
 
-    groupDefs['@media'] = keyframes;
+    if(mediaQueries){
+        groupDefs['@media'] = mediaQueries;
+    }
 
     return css;
 }
@@ -69,13 +71,44 @@ function renderGroup(groupDef) {
     return result;
 }
 
+function renderKeyframes(keyframes){
+    return keyframes.join('').replace(/\s|\n/g, '');
+}
+
+function renderMediaQueries(mediaQueries){
+    var result = '';
+
+    for (var i = 0; i < mediaQueries.length; i++) {
+        var mediaQuery = mediaQueries[i],
+            firstBrace = mediaQuery.indexOf('{'),
+            query = mediaQuery.substring(0, firstBrace);
+
+        result += query;
+        result += render(parse(mediaQuery.substring(firstBrace + 1, mediaQuery.length -1)));
+    }
+
+    return result;
+}
+
 function render(groupDefs){
     var result = '';
+
     for(var key in groupDefs){
+        if(key === '@keyframes'){
+            result += renderKeyframes(groupDefs[key]);
+            continue;
+        }
+
+        if(key === '@media'){
+            result += renderMediaQueries(groupDefs[key]);
+            continue;
+        }
+
         result += key + '{';
         result += renderGroup(groupDefs[key]);
         result += '}';
     }
+
     return result;
 }
 
@@ -85,17 +118,22 @@ function parse(css){
     var groupDefs = {};
 
     css = parseKeyframes(css, groupDefs);
-    css = parseMedia(css, groupDefs);
+    css = parseMediaQueries(css, groupDefs);
 
     var parseRegex = /\s*(.*?)\{((?:.|\s)*?)\}/g;
 
     var groups = css.match(parseRegex);
 
-    groups.forEach(function(group){
-        parseGroup(group, groupDefs);
-    });
+    if(groups){
+        groups.forEach(function(group){
+            parseGroup(group, groupDefs);
+        });
+    }
 
-    console.log(render(groupDefs));
+    return groupDefs;
 }
 
-parse(fs.readFileSync('./test.css'));
+module.exports = {
+    parse: parse,
+    render:render
+};
