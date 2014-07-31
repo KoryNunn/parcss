@@ -22,14 +22,41 @@
     }
 }
 
+@keyframes fadeNFallout {
+    from {
+        opacity: 1;
+        transform: translate3d(0,0,0);
+    }
+    to {
+        opacity: 0;
+        transform: translate3d(0,-5px,0);
+    }
+}
+
 @media all and (max-width: 380px){
     body {
         background-image: url("../images/background.jpg");
     }
-    footer {
-        left: 320px;
-    }
+
     .mainMenu .profile {
         color: #fff;
+    }
+
+    body {
+        left: 320px;
+    }
+}
+
+@media all and (min-width: 380px){
+     body {
+        background-image: url("../images/smallbackground.jpg");
+    }
+
+    .mainMenu .profile {
+        color: #000;
+    }
+
+    body {
+        right: 640px;
     }
 }
