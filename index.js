@@ -1,139 +1,118 @@
-function parseStatement(statement, groupDef){
-    statement = statement.trim();
-    if(!statement){
+function parseNestContent(nest, groupDefinitions) {
+
+    if(typeof nest === 'string'){
+        var contentItems = nest.split(/:|;/);
+
+        for (var i = 0; i < contentItems.length -1 ; i+=2) {
+            groupDefinitions[contentItems[i].trim()] = contentItems[i+1].trim();
+        }
+
         return;
     }
-    var statementParts = statement.match(/^(.*?):(.*?)$/),
-        property = statementParts[1].trim(),
-        value = statementParts[2].trim();
 
-    if(!groupDef[property]){
-        groupDef[property] = {};
+    var selector = nest.open[1],
+        content = nest.content;
+
+    if(!groupDefinitions[selector]){
+        groupDefinitions[selector] = {};
     }
 
-    groupDef[property] = value;
-}
-
-function parseGroup(group, groupDefs){
-    var groupParts = group.match(/\s*(.*?)\{((?:.|\s)*?)\}/),
-        selector = groupParts[1],
-        body = groupParts[2];
-
-    if(!groupDefs[selector]){
-        groupDefs[selector] = {};
-    }
-
-    var statements = body.trim().split(';');
-
-    statements.forEach(function(statement){
-        try{
-            parseStatement(statement, groupDefs[selector]);
-        }catch(error){
-            console.log(error);
-            console.log('At: ' + JSON.stringify(statement));
-        }
+    content.forEach(function(nest){
+       parseNestContent(nest, groupDefinitions[selector]);
     });
 }
 
-function parseKeyframes(css, groupDefs){
-    var keyframesRegex = /(@.*?keyframes.*?\w+.*?{(?:.|\n)*?}(?:\s|\n)})/g;
-
-    var keyframes = css.match(keyframesRegex);
-
-    css = css.replace(keyframesRegex, '');
-
-    if(keyframes){
-        groupDefs['@keyframes'] = keyframes;
-    }
-
-    return css;
+function parseNests(){
+    return [
+        {
+            open: ['.things{','.things'],
+            content: ['border: solid 1px red;'],
+            end: ['}']
+        },
+        {
+            open: ['@keyframes bla{', '@keyframes bla'],
+            content: [
+                {
+                    open: ['from{', 'from'],
+                    content: ['border: solid 1px red;'],
+                    end: ['}']
+                },
+                {
+                    open: ['to{', 'to'],
+                    content: ['border: solid 1px red;'],
+                    end: ['}']
+                }
+            ],
+            end: ['}']
+        },
+        {
+            open: ['@media (whatever){', '@media (whatever)'],
+            content: [
+                {
+                    open: ['.things{', '.things'],
+                    content: ['border: solid 1px red;'],
+                    end: ['}']
+                }
+            ],
+            end: ['}']
+        },
+        {
+            open: ['.stuff{','.stuff'],
+            content: ['border: solid 1px red;'],
+            end: ['}']
+        },
+        {
+            open: ['.things{','.things'],
+            content: ['border-color: green;'],
+            end: ['}']
+        },
+    ];
 }
 
-function parseMediaQueries(css, groupDefs){
-    var mediaQueryRegex = /(@.*?media.*?\w+.*?{(?:.|\n)*?}(?:\s|\n)})/g;
-
-    var mediaQueries = css.match(mediaQueryRegex);
-
-    css = css.replace(mediaQueryRegex, '');
-
-    if(mediaQueries){
-        groupDefs['@media'] = mediaQueries;
-    }
-
-    return css;
-}
-
-function renderGroup(groupDef) {
-    var result = '';
-    for(var key in groupDef){
-        result+= key + ':' + groupDef[key] + ';';
-    }
-    return result;
-}
-
-function renderKeyframes(keyframes){
-    return keyframes.join('').replace(/\s|\n/g, '');
-}
-
-function renderMediaQueries(mediaQueries){
-    var result = '';
-
-    for (var i = 0; i < mediaQueries.length; i++) {
-        var mediaQuery = mediaQueries[i],
-            firstBrace = mediaQuery.indexOf('{'),
-            query = mediaQuery.substring(0, firstBrace);
-
-        result += query;
-        result += '{';
-        result += render(parse(mediaQuery.substring(firstBrace + 1, mediaQuery.length -1)));
-        result += '}';
-    }
-
-    return result;
-}
-
-function render(groupDefs){
-    var result = '';
-
-    for(var key in groupDefs){
-        if(key === '@keyframes'){
-            result += renderKeyframes(groupDefs[key]);
-            continue;
-        }
-
-        if(key === '@media'){
-            result += renderMediaQueries(groupDefs[key]);
-            continue;
-        }
-
-        result += key + '{';
-        result += renderGroup(groupDefs[key]);
-        result += '}';
-    }
-
-    return result;
-}
+// var parseNests = require('./parseNest');
 
 function parse(css){
     css = css.toString();
 
-    var groupDefs = {};
+    var groupDefinitions = {},
+        startRegex = /^([^;}{]*?){/,
+        endRegex = /^}/,
+        nests = parseNests(css, startRegex, endRegex);
 
-    css = parseKeyframes(css, groupDefs);
-    css = parseMediaQueries(css, groupDefs);
+// console.log(JSON.stringify(nests, null, 4))
 
-    var parseRegex = /\s*(.*?)\{((?:.|\s)*?)\}/g;
+    nests.forEach(function(nest){
+        parseNestContent(nest, groupDefinitions);
+    });
 
-    var groups = css.match(parseRegex);
+    return groupDefinitions;
+}
 
-    if(groups){
-        groups.forEach(function(group){
-            parseGroup(group, groupDefs);
-        });
+function renderGroup(groupDefinition) {
+    var result = '';
+
+    for(var key in groupDefinition){
+        if(typeof groupDefinition[key] === 'object'){
+            result+= renderGroup(groupDefinition[key]);
+        } else {
+            result+= key + ':' + groupDefinition[key] + ';';
+        }
+    }
+    return result;
+}
+
+function render(groupDefinitions){
+    var result = '';
+
+    for(var key in groupDefinitions){
+        result += key + '{';
+        result += renderGroup(groupDefinitions[key]);
+        result += '}';
     }
 
-    return groupDefs;
+    return result;
 }
+
 
 module.exports = {
     parse: parse,
