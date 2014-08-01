@@ -77,14 +77,6 @@ function lexNests(string, openRegex, closeRegex){
     return nests;
 }
 
-console.log(JSON.stringify(lexNests(
-    // '.abc{color:red; .things{bla}}',
-    '.abc{color:red; .things{bla}} .abc{color:red; .things{bla}}',
-    // '.abc{color:red;}',
-    /^([^;}{]*?){/,
-    /^}/
-), null, 4));
-
 /**
 
     ## usage:
