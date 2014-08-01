@@ -9,6 +9,8 @@ var options = require('minimist')(process.argv.slice(2)),
     help = options.h || options.help,
     version = options.v || options.version,
     pretty = options.p || options.pretty,
+    newline = '',
+    tab = '',
     result;
 
 
@@ -31,7 +33,12 @@ if(help || !input){
     process.exit(1);
 }
 
-result = parcss.render(parcss.parse(fs.readFileSync(input)), pretty);
+if(pretty){
+    newline = '\n';
+    tab = '    ';
+}
+
+result = parcss.render(parcss.parse(fs.readFileSync(input)), newline, tab);
 
 if(output){
     fs.writeFileSync(output, result);

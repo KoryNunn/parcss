@@ -1,5 +1,4 @@
 function parseNestContent(nest, groupDefinitions) {
-
     if(typeof nest === 'string'){
         var contentItems = nest.split(/:|;/);
 
@@ -38,8 +37,6 @@ function parse(css){
         endRegex = /^}/,
         nests = parseNests(css, startRegex, endRegex);
 
-console.log(JSON.stringify(nests, null, 4))
-
     nests.forEach(function(nest){
         parseNestContent(nest, groupDefinitions);
     });
@@ -47,39 +44,44 @@ console.log(JSON.stringify(nests, null, 4))
     return groupDefinitions;
 }
 
-function renderGroup(groupDefinition, newLine, tab, tabDepth) {
+function renderGroup(selector, groupDefinition, newLine, tab, tabDepth) {
     var result = '',
         tabs = '';
 
     if(!tabDepth){
-        tabDepth = 1;
+        tabDepth = 0;
     }
 
     for(var i = 0; i < tabDepth; i++){
         tabs += tab;
     }
 
+    result += tabs + selector + '{';
+    result += newLine;
+
     for(var key in groupDefinition){
         if(typeof groupDefinition[key] === 'object'){
-            result += renderGroup(groupDefinition[key], newLine, tab, tabDepth);
+            result += renderGroup(key, groupDefinition[key], newLine, tab, tabDepth + 1);
         } else {
-            result += tabs + key + ':' + groupDefinition[key] + ';' + newLine;
+            result += tabs + tab + key + ':' + groupDefinition[key] + ';' + newLine;
         }
     }
+
+    result += tabs + '}';
+    result += newLine;
+
     return result;
 }
 
-function render(groupDefinitions, pretty){
-    var result = '',
-        newLine = pretty ? '\n' : '',
-        tab = pretty ? '    ' : '';
+function render(groupDefinitions, newLine, tab, tabDepth){
+    var result = '';
+
+    newLine = newLine || '';
+    tab = tab || '';
+    tabDepth = tabDepth || 0;
 
     for(var key in groupDefinitions){
-        result += key + '{';
-        result += newLine;
-        result += renderGroup(groupDefinitions[key], newLine, tab);
-        result += '}';
-        result += newLine;
+        result += renderGroup(key, groupDefinitions[key], newLine, tab, tabDepth);
     }
 
     return result;
