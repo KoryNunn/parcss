@@ -32,3 +32,4 @@ node_modules
 .jshintrc
 
 index.css
+foo.css

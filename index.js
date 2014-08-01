@@ -84,7 +84,9 @@ function renderMediaQueries(mediaQueries){
             query = mediaQuery.substring(0, firstBrace);
 
         result += query;
+        result += '{';
         result += render(parse(mediaQuery.substring(firstBrace + 1, mediaQuery.length -1)));
+        result += '}';
     }
 
     return result;
