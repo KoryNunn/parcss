@@ -1,0 +1,57 @@
+{
+    "@keyframes fadeNFallIn": {
+        "from": {
+            "opacity": "0",
+            "transform": "translate3d(0,-5px,0)"
+        },
+        "to": {
+            "opacity": "1",
+            "transform": "translate3d(0,0,0)"
+        }
+    },
+    "@keyframes fadeNFallout": {
+        "from": {
+            "opacity": "1",
+            "transform": "translate3d(0,0,0)"
+        },
+        "to": {
+            "opacity": "0",
+            "transform": "translate3d(0,-5px,0)"
+        }
+    },
+    "@media all and (max-width: 380px)": {
+        ".mainMenu .profile": {
+            "color": "#fff"
+        },
+        "body": {
+            "background-image": "url(\"../images/background.jpg\")",
+            "left": "320px"
+        },
+        "@keyframes fadeNFallout": {
+            "from": {
+                "opacity": "1",
+                "transform": "translate3d(0,0,0)"
+            },
+            "to": {
+                "opacity": "0",
+                "transform": "translate3d(0,-5px,0)"
+            }
+        }
+    },
+    "@media all and (min-width: 380px)": {
+        ".mainMenu .profile": {
+            "color": "#000"
+        },
+        "body": {
+            "background-image": "url(\"../images/smallbackground.jpg\")",
+            "right": "640px"
+        }
+    },
+    ".stuff": {
+        "border": "solid 1px pink"
+    },
+    ".thing": {
+        "border": "solid 12px pink",
+        "border-color": "pink"
+    }
+}
