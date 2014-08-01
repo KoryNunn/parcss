@@ -29,6 +29,7 @@ if(help || !input){
     console.log('  -v, --version                  output the version number');
     console.log('  -i, --input [file]             Input File');
     console.log('  -o, --output [file]            Output File');
+    console.log('  -p, --pretty                   Pretty Print');
     console.log();
     process.exit(1);
 }
