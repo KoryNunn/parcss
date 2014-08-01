@@ -20,22 +20,14 @@ test('parcss.parse produces the correct definitions', function(t){
 
     var definitions = parcss.parse(fs.readFileSync(__dirname + '/test.css')),
         expectedDefinitions = {
-            '@keyframes': [
-                '@keyframes fadeNFallIn {\n    from {\n        opacity: 0;\n        transform: translate3d(0,-5px,0);\n    }\n    to {\n        opacity: 1;\n        transform: translate3d(0,0,0);\n    }\n}',
-                '@keyframes fadeNFallout {\n    from {\n        opacity: 1;\n        transform: translate3d(0,0,0);\n    }\n    to {\n        opacity: 0;\n        transform: translate3d(0,-5px,0);\n    }\n}'
-            ],
-            '@media': [
-                '@media all and (max-width: 380px){\n    body {\n        background-image: url("../images/background.jpg");\n    }\n\n    .mainMenu .profile {\n        color: #fff;\n    }\n\n    body {\n        left: 320px;\n    }\n}',
-                '@media all and (min-width: 380px){\n     body {\n        background-image: url("../images/smallbackground.jpg");\n    }\n\n    .mainMenu .profile {\n        color: #000;\n    }\n\n    body {\n        right: 640px;\n    }\n}'
-            ],
-            '.thing': {
-                border: 'solid 12px red',
-                'border-color': 'green'
-            },
-            '.stuff': {
-                border: 'solid 1px red'
-            }
-        };
+            ".things":{
+                "border":"solid 1px red",
+                "border-color":"green"},
+                "@keyframes bla":{
+                    "from":{
+                        "border":"solid 1px red"
+                    },
+                    "to":{"border":"solid 1px red"}},"@media (whatever)":{".things":{"border":"solid 1px red"}},".stuff":{"border":"solid 1px red"}};
 
     t.deepEqual(definitions, expectedDefinitions, 'definitions created correctly');
 });

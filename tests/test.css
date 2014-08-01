@@ -45,6 +45,7 @@
     body {
         left: 320px;
     }
+
 }
 
 @media all and (min-width: 380px){
@@ -59,4 +60,17 @@
     body {
         right: 640px;
     }
+}
+
+.thing{
+    border: solid 1px pink;
+}
+.stuff{
+    border: solid 1px pink;
+}
+.thing{
+    border: solid 12px pink;
+}
+.thing{
+    border-color: pink;
 }

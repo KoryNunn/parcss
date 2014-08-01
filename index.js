@@ -10,11 +10,17 @@ function parseNestContent(nest, groupDefinitions) {
         return;
     }
 
-    var selector = nest.open[1],
+    var selector = nest.open[1].trim(),
         content = nest.content;
 
     if(!groupDefinitions[selector]){
         groupDefinitions[selector] = {};
+    } else {
+        // We rely on order of keys to order the output
+        // This is dodgey but it works...
+        var currentDefinitions = groupDefinitions[selector];
+        delete groupDefinitions[selector];
+        groupDefinitions[selector] = currentDefinitions;
     }
 
     content.forEach(function(nest){
@@ -22,54 +28,7 @@ function parseNestContent(nest, groupDefinitions) {
     });
 }
 
-function parseNests(){
-    return [
-        {
-            open: ['.things{','.things'],
-            content: ['border: solid 1px red;'],
-            end: ['}']
-        },
-        {
-            open: ['@keyframes bla{', '@keyframes bla'],
-            content: [
-                {
-                    open: ['from{', 'from'],
-                    content: ['border: solid 1px red;'],
-                    end: ['}']
-                },
-                {
-                    open: ['to{', 'to'],
-                    content: ['border: solid 1px red;'],
-                    end: ['}']
-                }
-            ],
-            end: ['}']
-        },
-        {
-            open: ['@media (whatever){', '@media (whatever)'],
-            content: [
-                {
-                    open: ['.things{', '.things'],
-                    content: ['border: solid 1px red;'],
-                    end: ['}']
-                }
-            ],
-            end: ['}']
-        },
-        {
-            open: ['.stuff{','.stuff'],
-            content: ['border: solid 1px red;'],
-            end: ['}']
-        },
-        {
-            open: ['.things{','.things'],
-            content: ['border-color: green;'],
-            end: ['}']
-        },
-    ];
-}
-
-// var parseNests = require('./parseNest');
+var parseNests = require('./parseNest');
 
 function parse(css){
     css = css.toString();
@@ -79,7 +38,7 @@ function parse(css){
         endRegex = /^}/,
         nests = parseNests(css, startRegex, endRegex);
 
-// console.log(JSON.stringify(nests, null, 4))
+console.log(JSON.stringify(nests, null, 4))
 
     nests.forEach(function(nest){
         parseNestContent(nest, groupDefinitions);
@@ -88,26 +47,39 @@ function parse(css){
     return groupDefinitions;
 }
 
-function renderGroup(groupDefinition) {
-    var result = '';
+function renderGroup(groupDefinition, newLine, tab, tabDepth) {
+    var result = '',
+        tabs = '';
+
+    if(!tabDepth){
+        tabDepth = 1;
+    }
+
+    for(var i = 0; i < tabDepth; i++){
+        tabs += tab;
+    }
 
     for(var key in groupDefinition){
         if(typeof groupDefinition[key] === 'object'){
-            result+= renderGroup(groupDefinition[key]);
+            result += renderGroup(groupDefinition[key], newLine, tab, tabDepth);
         } else {
-            result+= key + ':' + groupDefinition[key] + ';';
+            result += tabs + key + ':' + groupDefinition[key] + ';' + newLine;
         }
     }
     return result;
 }
 
-function render(groupDefinitions){
-    var result = '';
+function render(groupDefinitions, pretty){
+    var result = '',
+        newLine = pretty ? '\n' : '',
+        tab = pretty ? '    ' : '';
 
     for(var key in groupDefinitions){
         result += key + '{';
-        result += renderGroup(groupDefinitions[key]);
+        result += newLine;
+        result += renderGroup(groupDefinitions[key], newLine, tab);
         result += '}';
+        result += newLine;
     }
 
     return result;
