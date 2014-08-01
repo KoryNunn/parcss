@@ -33,22 +33,27 @@ function parseNest(string, openRegex, closeRegex){
             continue;
         }
 
-        if(nest){
-            closeMatch = string.match(closeRegex);
-            if(closeMatch){
-                if(nest.content.length === 0){
-                    nest.content = [];
-                }
-                if(body){
-                    nest.content.push(body);
-                    body = '';
-                }
-                nest.close = closeMatch;
-                nests.push(nest);
-                nest = null;
-                string = string.slice(closeMatch[0].length);
-                continue;
+        closeMatch = string.match(closeRegex);
+        if(closeMatch){
+            if(!nest){
+                return {
+                    nests:nests,
+                    remaining: body + string
+                };
             }
+
+            if(nest.content.length === 0){
+                nest.content = [];
+            }
+            if(body){
+                nest.content.push(body);
+                body = '';
+            }
+            nest.close = closeMatch;
+            nests.push(nest);
+            nest = null;
+            string = string.slice(closeMatch[0].length);
+            continue;
         }
 
         body += string.slice(0,1);
@@ -72,12 +77,21 @@ function lexNests(string, openRegex, closeRegex){
     return nests;
 }
 
+console.log(JSON.stringify(lexNests(
+    // '.abc{color:red; .things{bla}}',
+    '.abc{color:red; .things{bla}} .abc{color:red; .things{bla}}',
+    // '.abc{color:red;}',
+    /^([^;}{]*?){/,
+    /^}/
+), null, 4));
+
 /**
 
     ## usage:
 
         lexNests(
             '.abc{color:red; .things{bla}}',
+            '.abc{color:red; .things{bla}} .abc{color:red; .things{bla}}',
             // '.abc{color:red;}',
             /^([^;}{]*?){/,
             /^}/
