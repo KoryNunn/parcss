@@ -1,11 +1,31 @@
 {
   "name": "parcss",
   "version": "0.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./tests"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Kory Nunn <knunn187@gmail.com>",
+  "contributors": [
+    "Kory Nunn <knunn187@gmail.com>",
+    "Maurice Butler <maurice.butler@gmail.com>"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KoryNunn/parcss.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KoryNunn/parcss/issues"
+  },
+  "homepage": "https://github.com/KoryNunn/parcss",
+  "dependencies": {
+    "minimist": "^0.2.0"
+  },
+  "bin": {
+    "parcss": "./cli.js"
+  },
+  "devDependencies": {
+    "grape": "^1.0.1"
+  }
 }
