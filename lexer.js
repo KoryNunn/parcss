@@ -27,15 +27,15 @@ function lexString(source){
     };
 }
 
-function lexIdentifier(source){
-    var match = source.match(/^\w+/);
+function lexWord(source){
+    var match = source.match(/^[\w-]+/);
 
     if(!match){
         return;
     }
 
     return {
-        type: 'identifier',
+        type: 'word',
         source: match[0],
         length: match[0].length
     };
@@ -142,7 +142,7 @@ var lexers = [
     lexDelimiter,
     lexCharacters,
     lexString,
-    lexIdentifier,
+    lexWord,
     lexColours
 ];
 
@@ -156,6 +156,11 @@ function scanForToken(tokenisers, expression){
 }
 
 function lex(source, memoisedTokens) {
+    var sourceRef = {
+        source: source,
+        toJSON: function(){}
+    };
+
     if(!source){
         return [];
     }
@@ -167,8 +172,7 @@ function lex(source, memoisedTokens) {
     var originalSource = source,
         tokens = [],
         totalCharsProcessed = 0,
-        previousLength,
-        reservedKeywordToken;
+        previousLength;
 
     do {
         previousLength = source.length;
@@ -178,6 +182,8 @@ function lex(source, memoisedTokens) {
         token = scanForToken(lexers, source);
 
         if(token){
+            token.sourceRef = sourceRef;
+            token.index = totalCharsProcessed;
             source = source.slice(token.length);
             totalCharsProcessed += token.length;
             tokens.push(token);
@@ -186,7 +192,7 @@ function lex(source, memoisedTokens) {
 
 
         if(source.length === previousLength){
-            throw "Unable to determine next token in source: " + source;
+            throw "Syntax error: Unable to determine next token in source: " + source;
         }
 
     } while (source);

@@ -3,10 +3,19 @@ var test = require('grape'),
     fs = require('fs');
 
 test('lex', function(t){
-    t.plan(6);
+    t.plan(1);
 
-    var css = fs.readFileSync(__dirname + '/test.css').toString(),
+    var css = fs.readFileSync(__dirname + '/simple.css').toString(),
         lexed = lex(css);
 
-    console.log(lexed);
+    var types = [];
+    for (var i = 0; i < lexed.length; i++) {
+        types.push(lexed[i].type);
+    };
+
+    t.deepEqual(types,
+        ['period', 'word', 'braceOpen', 'delimiter', 'word', 'colon',
+        'delimiter', 'word', 'delimiter', 'word', 'delimiter', 'word',
+        'semicolon', 'delimiter', 'braceClose']
+    );
 });
