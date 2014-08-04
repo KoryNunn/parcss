@@ -10,6 +10,11 @@ function renderGroup(selector, groupDefinition, newLine, tab, tabDepth) {
         tabs += tab;
     }
 
+    if(selector === '_statements'){
+        result += tabs + groupDefinition.join(tabs + tab + newLine) + newLine;
+        return result;
+    }
+
     result += tabs + selector + '{';
     result += newLine;
 

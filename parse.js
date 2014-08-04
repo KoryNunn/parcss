@@ -1,12 +1,26 @@
 function parseGroupContent(group, groupDefinitions) {
     if(typeof group === 'string'){
-        // TODO: This does not work if there is a : or ; in css such as content: ":"
-        var contentItems = group.split(/:|;/);
+        var string = group.trim();
+        while(string){
+            var atStatement = string.match(/^@([^]*?)(;[\w\s\n-]+?:|$)/),
+                contentItems = string.match(/^(.*?):([^]*?)(?:(;[\w\s\n-]+?:)|$)/);
 
-        for (var i = 0; i < contentItems.length -1 ; i+=2) {
-            var contents = contentItems[i].trim();
+            if(atStatement){
+                groupDefinitions['_statements'] = (groupDefinitions['_statements'] || []);
+                groupDefinitions['_statements'].push(atStatement[1]);
+                string = string.slice(atStatement[1].length + 1).trim();
+                continue;
+            }
+
+            if(!contentItems){
+                console.log(string);
+            }
+
+            string = string.slice(contentItems[1].length + contentItems[2].length + 2).trim();
+
+            var contents = contentItems[1].trim();
             delete groupDefinitions[contents];
-            groupDefinitions[contents] = contentItems[i+1].trim();
+            groupDefinitions[contents] = contentItems[2].trim();
         }
         return;
     }
