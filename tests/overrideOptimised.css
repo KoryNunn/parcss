@@ -1,0 +1,14 @@
+.stuff{
+    border:solid 1px red;
+}
+.thing{
+    border:solid 5px red;
+}
+.stuff,.thing{
+    border-color:green;
+}
+@media all{
+    .thing{
+        border-color:blue;
+    }
+}

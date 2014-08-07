@@ -2,6 +2,7 @@
 
 var options = require('minimist')(process.argv.slice(2)),
     fs = require('fs'),
+    path = require('path'),
     parcss = require('./'),
     packageInfo = require('./package'),
     input = options.i || options.input ||  options._[0],
@@ -39,12 +40,16 @@ if(pretty){
     tab = '    ';
 }
 
-result = parcss.render(parcss.parse(fs.readFileSync(input)), newline, tab);
+var css = fs.readFileSync(path.resolve(process.cwd(), input)),
+    lexed = parcss.lex(css.toString()),
+    parsed = parcss.parse(lexed),
+    optimised = parcss.optimise(parsed),
+    rendered = parcss.render(optimised, newline, tab);
 
 if(output){
-    fs.writeFileSync(output, result);
+    fs.writeFileSync(output, rendered);
 } else {
-    console.log(result);
+    console.log(rendered);
 }
 
 process.exit(0);
