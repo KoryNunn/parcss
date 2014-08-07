@@ -2,6 +2,8 @@
 
 A CSS parser that ACTUALLY works...
 
+Removes unused selectors, properties. Combines selectors with duplicate definitions. (sometimes, nieve implementation for now)
+
 ## Usage
 
 ### CLI
@@ -18,8 +20,14 @@ A CSS parser that ACTUALLY works...
 
 ### Module
 
-    var parcss = require('parcss'),
-        definitions = parcss.parse(fs.readFileSync('myCoolFile.css')),
-        result = parcss.render(definitions);
+Compress some CSS:
 
-    console.log(result);
+    var compressed = parcss.compress(css);
+
+Or you can do each step yourself if you wish:
+
+    var parcss = require('parcss'),
+        tokens = parcss.lex(fs.readFileSync('myCoolFile.css')),
+        ast = parcss.parse(tokens),
+        optimisedDefinitions = parcss.optimise(ast),
+        compressed = parcss.render(optimisedDefinitions);
