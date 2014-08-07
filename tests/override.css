@@ -1,0 +1,25 @@
+.thing{
+    border: solid 1px red;
+}
+
+.stuff{
+    border: solid 1px red;
+}
+
+.thing{
+    border: solid 5px red;
+    border-color: blue;
+}
+
+.stuff, .thing{
+    border-color: green;
+}
+
+@media all{
+    .thing{
+        border-color: red;
+    }
+    .thing{
+        border-color: blue;
+    }
+}

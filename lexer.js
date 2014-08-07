@@ -28,7 +28,7 @@ function lexString(source){
 }
 
 function lexWord(source){
-    var match = source.match(/^[\w-]+/);
+    var match = source.match(/^[\w-%!\[\]=+^]+/);
 
     if(!match){
         return;
@@ -57,8 +57,8 @@ function lexCharacters(source){
         case '<': type = 'lessThan'; break;
         case '*': type = 'asterix'; break;
         case '.': type = 'period'; break;
-        case '-': type = 'hyphen'; break;
         case ',': type = 'comma'; break;
+        case '/': type = 'forwardSlash'; break;
     }
 
     if(!type){
@@ -91,7 +91,8 @@ function lexColours(source){
 
     if(hexMatch){
         return{
-            type: 'hex',
+            type: 'color',
+            kind: 'hex',
             source: hexMatch[0],
             length: hexMatch[0].length
         };
@@ -101,7 +102,8 @@ function lexColours(source){
 
     if(rgbMatch){
         return{
-            type: 'rgb',
+            type: 'color',
+            kind: 'rgb',
             source: rgbMatch[0],
             length: rgbMatch[0].length
         };
@@ -111,7 +113,8 @@ function lexColours(source){
 
     if(rgbaMatch){
         return{
-            type: 'rgba',
+            type: 'color',
+            kind: 'rgba',
             source: rgbaMatch[0],
             length: rgbaMatch[0].length
         };
@@ -121,7 +124,8 @@ function lexColours(source){
 
     if(hslMatch){
         return{
-            type: 'hsl',
+            type: 'color',
+            kind: 'hsl',
             source: hslMatch[0],
             length: hslMatch[0].length
         };
@@ -131,7 +135,8 @@ function lexColours(source){
 
     if(hslaMatch){
         return{
-            type: 'hsla',
+            type: 'color',
+            kind: 'hsla',
             source: hslaMatch[0],
             length: hslaMatch[0].length
         };
@@ -142,8 +147,8 @@ var lexers = [
     lexDelimiter,
     lexCharacters,
     lexString,
-    lexWord,
-    lexColours
+    lexColours,
+    lexWord
 ];
 
 function scanForToken(tokenisers, expression){
@@ -192,7 +197,7 @@ function lex(source, memoisedTokens) {
 
 
         if(source.length === previousLength){
-            throw "Syntax error: Unable to determine next token in source: " + source;
+            throw "Syntax error: Unable to determine next token in source: " + source.slice(0, 100);
         }
 
     } while (source);

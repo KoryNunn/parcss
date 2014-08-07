@@ -34,8 +34,17 @@ function findFirstIndex(tokens, type){
     }
     return -1;
 }
+function findLastIndex(tokens, type){
+    for (var i = tokens.length-1; i >= 0; i--) {
+        if(tokens[i].type === type){
+            return i;
+        }
+    }
+    return -1;
+}
 
 function cleanDelimiters(tokens){
+    tokens = tokens.slice();
     for (var i = 0; i < tokens.length; i++) {
         if(tokens[i].type === 'delimiter'){
             tokens.splice(i,1);
@@ -58,12 +67,14 @@ function parseAts(tokens, ast){
             position++;
         }
 
-        if(position>tokens.length || tokens.length - position < 4){
+        if(position>tokens.length){
             parseError('unexpected end of input.', tokens[tokens.length-1]);
         }
 
+        var atsTokens = tokens.splice(0, position);
+
         matchStructure(
-            tokens,
+            atsTokens,
             [
                 'at',
                 'word',
@@ -71,17 +82,17 @@ function parseAts(tokens, ast){
             ]
         );
 
-        var atsTokens = cleanDelimiters(tokens.splice(0, position));
-
         if(atsTokens[2].type !== 'delimiter'){
             parseError('expected expression', atsTokens[2]);
         }
 
         ast.push({
             type: 'at',
-            childTokens: atsTokens
+            kind: atsTokens[1].source,
+            valueTokens: cleanDelimiters(atsTokens).slice(2, -1)
         });
     }
+    return true;
 }
 
 function parseStatement(tokens, ast){
@@ -96,11 +107,15 @@ function parseStatement(tokens, ast){
         position++;
     }
 
-    if(position>tokens.length){
+    if(position>tokens.length || position === 1){
         parseError('unexpected end of input.', tokens[tokens.length-1]);
     }
 
     var statementTokens = cleanDelimiters(tokens.splice(0, position)).slice(0, -1);
+
+    if(statementTokens.length<2){
+        parseError('unexpected end of input.', statementTokens[statementTokens.length-1]);
+    }
 
     var statement = {
         type: 'statement',
@@ -109,6 +124,7 @@ function parseStatement(tokens, ast){
     };
 
     ast.push(statement);
+    return true;
 }
 
 function parseSelector(tokens) {
@@ -164,10 +180,11 @@ function parseBlock(tokens, ast){
     }
 
     var prefixTokens = tokens.splice(0, firstBraceIndex),
-        atIndex = findFirstIndex(prefixTokens, 'at');
+        atIndex = findLastIndex(prefixTokens, 'at');
 
     if(atIndex >= 0){
         block.kind = prefixTokens[atIndex + 1].source;
+        block.keyTokens = cleanDelimiters(prefixTokens).slice(2);
     }else{
         block.selectors = parseSelector(prefixTokens);
     }
@@ -175,11 +192,18 @@ function parseBlock(tokens, ast){
     tokens.splice(0,2);
 
     ast.push(block);
+    return true;
+}
 
-    parseBlock(tokens, ast);
+function parseDelimiters(tokens){
+    if(tokens[0].type === 'delimiter'){
+        tokens.splice(0,1);
+        return true;
+    }
 }
 
 var parsers = [
+    parseDelimiters,
     parseBlock,
     parseAts,
     parseStatement
@@ -194,7 +218,9 @@ function parse(tokens){
 
     while(tokens.length){
         for(var i = 0; i < parsers.length && tokens.length; i++){
-            parsers[i](tokens, ast);
+            if(parsers[i](tokens, ast)){
+                i = 0;
+            };
         }
         if(lastLength === tokens.length){
             parseError('unknown token', tokens[0]);

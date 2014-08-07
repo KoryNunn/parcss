@@ -81,7 +81,7 @@ test('multiple selectors', function(t){
 
 });
 
-test('multiple selectors', function(t){
+test('media', function(t){
     t.plan(1);
 
     var css = fs.readFileSync(__dirname + '/media.css').toString(),
@@ -132,7 +132,87 @@ test('multiple selectors', function(t){
                     ]
                 }
             ],
-            "kind": "media"
+            "kind": "media",
+            "keyTokens": [
+                {
+                    "type": "word",
+                    "source": "all",
+                    "length": 3,
+                    "index": 7
+                },
+                {
+                    "type": "word",
+                    "source": "and",
+                    "length": 3,
+                    "index": 11
+                },
+                {
+                    "type": "parenthesisOpen",
+                    "source": "(",
+                    "length": 1,
+                    "index": 15
+                },
+                {
+                    "type": "word",
+                    "source": "max-width",
+                    "length": 9,
+                    "index": 16
+                },
+                {
+                    "type": "colon",
+                    "source": ":",
+                    "length": 1,
+                    "index": 25
+                },
+                {
+                    "type": "word",
+                    "source": "380px",
+                    "length": 5,
+                    "index": 27
+                },
+                {
+                    "type": "parenthesisClose",
+                    "source": ")",
+                    "length": 1,
+                    "index": 32
+                }
+            ]
+        }
+    ]);
+
+});
+
+test('import', function(t){
+    t.plan(1);
+
+    var css = fs.readFileSync(__dirname + '/import.css').toString(),
+        lexed = lex(css),
+        parsed = parse(lexed);
+
+    t.deepEqual(JSON.parse(JSON.stringify(parsed)), [
+        {
+            "type": "at",
+            "kind": "import",
+            "valueTokens": [
+                {
+                    "type": "word",
+                    "source": "stuff",
+                    "length": 5,
+                    "index": 8
+                },
+                {
+                    "type": "word",
+                    "source": "and",
+                    "length": 3,
+                    "index": 14
+                },
+                {
+                    "type": "word",
+                    "source": "things",
+                    "length": 6,
+                    "index": 18
+                }
+            ]
         }
     ]);
 
