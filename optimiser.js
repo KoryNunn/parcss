@@ -46,11 +46,27 @@ function Block(type, selectors, parent, definedRules, properties){
 }
 
 function optimiseSelectorBlock(block, ruleset, definedRules){
-    var properties = {};
+    var properties = {},
+        lastPropertyToken;
 
     for(var i = 0; i < block.content.length; i++){
-        delete properties[block.content[i].property];
-        properties[block.content[i].property] = block.content[i].valueTokens;
+        var propertyToken = block.content[i],
+            propertyValues = properties[propertyToken.property] || [];
+
+        if(lastPropertyToken && propertyToken.property !== lastPropertyToken.property){
+            propertyValues = [];
+        }
+
+        delete properties[propertyToken.property];
+
+        propertyValues.push(propertyToken.valueTokens);
+
+        if(deepEqual(lastPropertyToken, propertyToken)){
+            continue;
+        }
+
+        properties[propertyToken.property] = propertyValues;
+        lastPropertyToken = propertyToken;
     }
 
     for(var i = 0; i < block.selectors.length; i++){
@@ -115,6 +131,7 @@ function optimiseRules(rules){
         var rule = rules[i];
 
         if(rule.type === 'selectorBlock'){
+
             if(deepEqual(rule.properties, lastRule.properties)){
                 rule.selectors.unshift.apply(rule.selectors, lastRule.selectors);
                 lastRule.remove();

@@ -42,9 +42,11 @@ function renderRule(rule, newLine, tab, tabDepth) {
         result += tabs + rule.selectors.join(',') + '{';
         result += newLine;
         for(var key in rule.properties){
-            var property = rule.properties[key];
+            var propertyValues = rule.properties[key];
 
-            result += tabs + tab + key + ':' + renderValue(property) + ';' + newLine;
+            for(var i = 0; i < propertyValues.length; i++){
+                result += tabs + tab + key + ':' + renderValue(propertyValues[i]) + ';' + newLine;
+            }
         }
     }else if(rule.type === 'specialBlock'){
         result += tabs + '@' + rule.kind + ' ' + renderValue(rule.keyTokens) + '{';

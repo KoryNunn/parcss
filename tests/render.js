@@ -104,3 +104,16 @@ test('colours', function(t){
 
     t.equal(rendered, expectedCss);
 });
+
+test('duplicate', function(t){
+    t.plan(1);
+
+    var css = fs.readFileSync(__dirname + '/duplicate.css').toString(),
+        expectedCss = fs.readFileSync(__dirname + '/duplicateOptimised.css').toString(),
+        lexed = lex(css),
+        parsed = parse(lexed),
+        optimised = optimise(parsed),
+        rendered = render(optimised, '\n', '    ');
+
+    t.equal(rendered, expectedCss);
+});
