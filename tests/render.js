@@ -38,7 +38,7 @@ test('media', function(t){
         optimised = optimise(parsed),
         rendered = render(optimised, '\n', '    ');
 
-    t.equal(rendered, '@media all and(max-width:380px){\n    .thing{\n        background-image:url(\"../images/background.jpg\");\n    }\n}\n');
+    t.equal(rendered, '@media all and (max-width:380px){\n    .thing{\n        background-image:url(\"../images/background.jpg\");\n    }\n}\n');
 });
 
 test('keyframes', function(t){
