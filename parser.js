@@ -1,6 +1,7 @@
 var ansi = require('ansi-styles');
 
 function parseError(message, token){
+    console.log(arguments)
     var start = token.index > 50 ? token.index - 50 : 0,
         errorIndex = token.index > 50 ? 50 : token.index,
         surroundingSource = token.sourceRef.source.slice(start, token.index + 50),
@@ -95,12 +96,17 @@ function parseAts(tokens, ast){
     return true;
 }
 
+function parseValue(tokens) {
+    while(parseParenthesis(tokens)){};
+
+    return tokens;
+}
+
 function parseStatement(tokens, ast){
     if(tokens.length === 1 && tokens[0].type === 'delimiter'){
         tokens.splice(position, 1);
         return;
     }
-
     // eg: any thing at all that isnt a nest or an @;
     var position = 1;
     while(position < tokens.length && tokens[position-1].type !== 'semicolon' && tokens[position].type !== 'braceOpen'){
@@ -108,19 +114,22 @@ function parseStatement(tokens, ast){
     }
 
     if(position>tokens.length || position === 1){
+        debugger;
+        console.log('KLERBOOM!')
         parseError('unexpected end of input.', tokens[tokens.length-1]);
     }
 
     var statementTokens = cleanDelimiters(tokens.splice(0, position)).slice(0, -1);
 
     if(statementTokens.length<2){
+        console.log('BERKLOOM!')
         parseError('unexpected end of input.', statementTokens[statementTokens.length-1]);
     }
 
     var statement = {
         type: 'statement',
         property: statementTokens[0].source,
-        valueTokens: statementTokens.slice(2)
+        valueTokens: parseValue(statementTokens.slice(2))
     };
 
     ast.push(statement);
@@ -150,6 +159,42 @@ function parseSelector(tokens) {
     }
     selectors.push(selector.trim());
     return selectors;
+}
+
+function parseParenthesis(tokens) {
+    var firstParenthesisIndex = findFirstIndex(tokens, 'parenthesisOpen');
+
+    if(firstParenthesisIndex<0) {
+        return;
+    }
+
+    var position = firstParenthesisIndex,
+        opens = 1;
+
+    while(++position, position <= tokens.length && opens){
+        if(!tokens[position]){
+            parseError('invalid nesting. No closing token was found', tokens[position-1]);
+        }
+        if(tokens[position].type === 'parenthesisOpen') {
+            opens++;
+        }
+        if(tokens[position].type === 'parenthesisClose') {
+            opens--;
+        }
+    }
+
+    var parenthesis = {
+        type: 'function',
+        arguments: tokens.splice(firstParenthesisIndex+1, position-firstParenthesisIndex-2)
+    }
+
+    var prefixTokens = tokens.splice(firstParenthesisIndex-1, 1);
+
+    parenthesis.functionName = prefixTokens.shift().source;
+
+    tokens.splice(firstParenthesisIndex-1,position-firstParenthesisIndex-1, parenthesis);
+
+    return true;
 }
 
 function parseBlock(tokens, ast){
