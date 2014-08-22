@@ -183,16 +183,16 @@ function parseParenthesis(tokens) {
         }
     }
 
-    var parenthesis = {
+    var functionToken = {
         type: 'function',
         arguments: tokens.splice(firstParenthesisIndex+1, position-firstParenthesisIndex-2)
     }
 
-    var prefixTokens = tokens.splice(firstParenthesisIndex-1, 1);
+    var functionIdentifier = tokens.splice(firstParenthesisIndex-1, 1).pop();
 
-    parenthesis.functionName = prefixTokens.shift().source;
+    functionToken.functionName = functionIdentifier.source;
 
-    tokens.splice(firstParenthesisIndex-1,position-firstParenthesisIndex-1, parenthesis);
+    tokens.splice(firstParenthesisIndex-1, position-firstParenthesisIndex-1, functionToken);
 
     return true;
 }
