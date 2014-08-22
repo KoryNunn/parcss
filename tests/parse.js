@@ -100,29 +100,17 @@ test('media', function(t){
                             "property": "background-image",
                             "valueTokens": [
                                 {
-                                    "type": "word",
-                                    "source": "url",
-                                    "length": 3,
-                                    "index": 73
-                                },
-                                {
-                                    "type": "parenthesisOpen",
-                                    "source": "(",
-                                    "length": 1,
-                                    "index": 76
-                                },
-                                {
-                                    "type": "string",
-                                    "stringChar": "\"",
-                                    "source": "\"../images/background.jpg\"",
-                                    "length": 26,
-                                    "index": 77
-                                },
-                                {
-                                    "type": "parenthesisClose",
-                                    "source": ")",
-                                    "length": 1,
-                                    "index": 103
+                                    "type": "function",
+                                    "arguments": [
+                                        {
+                                            "type": "string",
+                                            "stringChar": "\"",
+                                            "source": "\"../images/background.jpg\"",
+                                            "length": 26,
+                                            "index": 77
+                                        }
+                                    ],
+                                    "functionName": "url"
                                 }
                             ]
                         }

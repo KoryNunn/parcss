@@ -14,7 +14,13 @@ function renderValue(tokens, specialBlock){
     for(var i = 0; i < tokens.length; i++){
         var token = tokens[i];
 
-        result += token.source;
+        if(token.type === 'function') {
+            result += token.functionName + '(';
+            result += renderValue(token.arguments);
+            result += ')';
+        } else {
+            result += token.source;
+        }
 
         if(i === tokens.length -1){
             continue;
