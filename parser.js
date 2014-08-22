@@ -113,15 +113,12 @@ function parseStatement(tokens, ast){
     }
 
     if(position>tokens.length || position === 1){
-        debugger;
-        console.log('KLERBOOM!')
         parseError('unexpected end of input.', tokens[tokens.length-1]);
     }
 
     var statementTokens = cleanDelimiters(tokens.splice(0, position)).slice(0, -1);
 
     if(statementTokens.length<2){
-        console.log('BERKLOOM!')
         parseError('unexpected end of input.', statementTokens[statementTokens.length-1]);
     }
 
