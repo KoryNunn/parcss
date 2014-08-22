@@ -1,7 +1,6 @@
 var ansi = require('ansi-styles');
 
 function parseError(message, token){
-    console.log(arguments)
     var start = token.index > 50 ? token.index - 50 : 0,
         errorIndex = token.index > 50 ? 50 : token.index,
         surroundingSource = token.sourceRef.source.slice(start, token.index + 50),
