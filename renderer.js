@@ -67,6 +67,13 @@ function renderRule(rule, newLine, tab, tabDepth) {
     }else if(rule.type === 'specialBlock'){
         result += tabs + '@' + rule.kind + ' ' + renderValue(rule.keyTokens, true) + '{';
         result += newLine;
+        for(var key in rule.properties){
+            var propertyValues = rule.properties[key];
+
+            for(var i = 0; i < propertyValues.length; i++){
+                result += tabs + tab + key + ':' + renderValue(propertyValues[i]) + ';' + newLine;
+            }
+        }
         for(var i = 0; i < rule.content.length; i++){
             result += renderRule(rule.content[i], newLine, tab, tabDepth+1);
         }

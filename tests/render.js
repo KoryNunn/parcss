@@ -117,3 +117,16 @@ test('duplicate', function(t){
 
     t.equal(rendered, expectedCss);
 });
+
+test('font-face', function(t){
+    t.plan(1);
+
+    var css = fs.readFileSync(__dirname + '/font-face.css').toString(),
+        expectedCss = fs.readFileSync(__dirname + '/font-faceOptimised.css').toString(),
+        lexed = lex(css),
+        parsed = parse(lexed),
+        optimised = optimise(parsed),
+        rendered = render(optimised, '\n', '    ');
+
+    t.equal(rendered, expectedCss);
+});

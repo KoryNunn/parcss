@@ -45,11 +45,15 @@ function Block(type, selectors, parent, definedRules, properties){
     }
 }
 
-function optimiseSelectorBlock(block, ruleset, definedRules){
+function optimiseStatements(block){
     var properties = {},
         lastPropertyToken;
 
     for(var i = 0; i < block.content.length; i++){
+        if(block.content[i].type !== 'statement'){
+            continue;
+        }
+
         var propertyToken = block.content[i],
             propertyValues = properties[propertyToken.property] || [];
 
@@ -69,6 +73,12 @@ function optimiseSelectorBlock(block, ruleset, definedRules){
         lastPropertyToken = propertyToken;
     }
 
+    return properties;
+}
+
+function optimiseSelectorBlock(block, ruleset, definedRules){
+    var properties = optimiseStatements(block);
+
     for(var i = 0; i < block.selectors.length; i++){
         var newBlock = new Block(
             'selectorBlock',
@@ -80,17 +90,6 @@ function optimiseSelectorBlock(block, ruleset, definedRules){
         optimiseSelector(block.selectors[i], newBlock, definedRules);
         ruleset.push(newBlock);
     }
-
-}
-
-function createSpecialBlockKey(kind, keyTokens){
-    var key = [];
-
-    for(var i = 0; i < keyTokens.length; i++){
-        key.push(keyTokens[i].source);
-    }
-
-    return '@' + kind + ' ' + key.join(' ');
 }
 
 function optimiseSpecialBlock(block, ruleset){
@@ -98,6 +97,7 @@ function optimiseSpecialBlock(block, ruleset){
         type: 'specialBlock',
         kind: block.kind,
         keyTokens: block.keyTokens,
+        properties: optimiseStatements(block),
         content: optimise(block.content)
     });
 }

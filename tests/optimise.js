@@ -139,6 +139,7 @@ test('override', function(t){
                     "index": 189
                 }
             ],
+            "properties": {},
             "content": [
                 {
                     "type": "selectorBlock",
