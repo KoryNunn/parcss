@@ -55,7 +55,7 @@ test('optimise comment', function(t){
     t.deepEqual(JSON.parse(JSON.stringify(optimised)), []);
 });
 
-test('simple', function(t){
+test('render comment', function(t){
     t.plan(1);
 
     var css = fs.readFileSync(__dirname + '/comment.css').toString(),

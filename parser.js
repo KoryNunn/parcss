@@ -108,15 +108,20 @@ function parseStatement(tokens, ast){
     }
     // eg: any thing at all that isnt a nest or an @;
     var position = 1;
-    while(position < tokens.length && tokens[position-1].type !== 'semicolon' && tokens[position].type !== 'braceOpen'){
+    while(position < tokens.length && tokens[position-1].type !== 'semicolon' && tokens[position].type !== 'braceClose'){
         position++;
     }
+
 
     if(position>tokens.length || position === 1){
         parseError('unexpected end of input.', tokens[tokens.length-1]);
     }
 
-    var statementTokens = cleanDelimiters(tokens.splice(0, position)).slice(0, -1);
+    var statementTokens = cleanDelimiters(tokens.splice(0, position));
+
+    if(statementTokens.length && statementTokens[statementTokens.length-1].type === 'semicolon'){
+        statementTokens.pop();
+    }
 
     if(statementTokens.length<2){
         parseError('unexpected end of input.', statementTokens[statementTokens.length-1]);
@@ -218,7 +223,7 @@ function parseBlock(tokens, ast){
     var block = {
         type: 'block',
         content: parse(tokens.splice(firstBraceIndex+1, position-firstBraceIndex-2))
-    }
+    };
 
     var prefixTokens = tokens.splice(0, firstBraceIndex),
         atIndex = findLastIndex(prefixTokens, 'at');
@@ -277,6 +282,7 @@ function parse(tokens){
 
     while(tokens.length){
         for(var i = 0; i < parsers.length && tokens.length; i++){
+
             if(parsers[i](tokens, ast)){
                 i = 0;
             };
