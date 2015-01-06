@@ -12,7 +12,7 @@ test('simple', function(t){
         parsed = parse(lexed),
         optimised = optimise(parsed);
 
-    t.deepEqual(JSON.parse(JSON.stringify(parsed)), [
+    t.deepEqual(JSON.parse(JSON.stringify(optimised)), [
         {
             "kind": "import",
             "type": "at",

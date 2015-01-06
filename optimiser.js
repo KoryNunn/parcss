@@ -79,6 +79,10 @@ function optimiseStatements(block){
 function optimiseSelectorBlock(block, ruleset, definedRules){
     var properties = optimiseStatements(block);
 
+    if(!Object.keys(properties).length){
+        return;
+    }
+
     for(var i = 0; i < block.selectors.length; i++){
         var newBlock = new Block(
             'selectorBlock',

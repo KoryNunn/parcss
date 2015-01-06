@@ -41,6 +41,20 @@ function lexWord(source){
     };
 }
 
+function lexComment(source){
+    var match = source.match(/^(\/\*[^]*?\/)/);
+
+    if(!match){
+        return;
+    }
+
+    return {
+        type: 'comment',
+        source: match[0],
+        length: match[0].length
+    };
+}
+
 function lexCharacters(source){
     var startChar = source.charAt(0),
         type;
@@ -57,6 +71,7 @@ function lexCharacters(source){
         case '<': type = 'lessThan'; break;
         case '*': type = 'asterix'; break;
         case '.': type = 'period'; break;
+        case '#': type = 'hash'; break;
         case ',': type = 'comma'; break;
         case '/': type = 'forwardSlash'; break;
     }
@@ -145,6 +160,7 @@ function lexColours(source){
 
 var lexers = [
     lexDelimiter,
+    lexComment,
     lexCharacters,
     lexString,
     lexColours,

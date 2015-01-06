@@ -243,8 +243,26 @@ function parseDelimiters(tokens){
     }
 }
 
+function parseComments(tokens, ast){
+    if(tokens[0].type !== 'comment'){
+        return;
+    }
+
+    var comment = {
+        type: 'comment',
+        value: tokens[0].source.slice(2,-2)
+    };
+
+    tokens.splice(0,1);
+
+    ast.push(comment);
+
+    return true;
+}
+
 var parsers = [
     parseDelimiters,
+    parseComments,
     parseBlock,
     parseAts,
     parseStatement
