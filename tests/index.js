@@ -5,3 +5,5 @@ require('./render');
 
 require('./comment');
 require('./cssFunctions');
+require('./sibling');
+require('./adjacent');
