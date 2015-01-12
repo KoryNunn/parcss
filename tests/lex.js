@@ -11,7 +11,7 @@ test('lex', function(t){
     var types = [];
     for (var i = 0; i < lexed.length; i++) {
         types.push(lexed[i].type);
-    };
+    }
 
     t.deepEqual(types,
         ['period', 'word', 'braceOpen', 'delimiter', 'word', 'colon',

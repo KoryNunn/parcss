@@ -74,6 +74,8 @@ function lexCharacters(source){
         case '#': type = 'hash'; break;
         case ',': type = 'comma'; break;
         case '/': type = 'forwardSlash'; break;
+        case '~': type = 'tilde'; break;
+        case '+': type = 'plus'; break;
     }
 
     if(!type){

@@ -5,10 +5,10 @@ var test = require('grape'),
     render = require('../renderer'),
     fs = require('fs');
 
-test('lex comment', function(t){
+test('lex sibling', function(t){
     t.plan(1);
 
-    var css = fs.readFileSync(__dirname + '/comment.css').toString(),
+    var css = fs.readFileSync(__dirname + '/sibling.css').toString(),
         lexed = lex(css);
 
     var types = [];
@@ -17,37 +17,31 @@ test('lex comment', function(t){
     }
 
     t.deepEqual(types,
-        ["hash","word","braceOpen","delimiter","comment","delimiter","braceClose"]
+        ["word","delimiter","tilde","delimiter","word","braceOpen","braceClose"]
     );
 });
 
-test('parse comment', function(t){
+test('parse sibling', function(t){
     t.plan(1);
 
-    var css = fs.readFileSync(__dirname + '/comment.css').toString(),
+    var css = fs.readFileSync(__dirname + '/sibling.css').toString(),
         lexed = lex(css),
         parsed = parse(lexed);
 
     t.deepEqual(JSON.parse(JSON.stringify(parsed)), [
-        {
-            "type": "block",
-            "content": [
-                {
-                    "type": "comment",
-                    "value": "\n        with a comment.\n    "
-                }
-            ],
-            "selectors": [
-                "#thing"
-            ]
-        }
-    ]);
+            {
+                "type":"block",
+                "content":[],
+                "selectors":["a ~ a"]
+            }
+        ]
+    );
 });
 
-test('optimise comment', function(t){
+test('optimise sibling', function(t){
     t.plan(1);
 
-    var css = fs.readFileSync(__dirname + '/comment.css').toString(),
+    var css = fs.readFileSync(__dirname + '/sibling.css').toString(),
         lexed = lex(css),
         parsed = parse(lexed),
         optimised = optimise(parsed);
@@ -55,10 +49,10 @@ test('optimise comment', function(t){
     t.deepEqual(JSON.parse(JSON.stringify(optimised)), []);
 });
 
-test('render comment', function(t){
+test('render sibling', function(t){
     t.plan(1);
 
-    var css = fs.readFileSync(__dirname + '/comment.css').toString(),
+    var css = fs.readFileSync(__dirname + '/sibling.css').toString(),
         lexed = lex(css),
         parsed = parse(lexed),
         optimised = optimise(parsed),
