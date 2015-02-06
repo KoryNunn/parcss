@@ -7,6 +7,9 @@ function isParenthesisOpen(type){
 function isParenthesisClose(type){
     return type === 'parenthesisClose';
 }
+function isString(type){
+    return type === 'string';
+}
 
 function renderValue(tokens, specialBlock){
     var result = '';
@@ -29,7 +32,9 @@ function renderValue(tokens, specialBlock){
         if(
             specialBlock && isWordlike(token.type) && isParenthesisOpen(tokens[i+1].type) ||
             isParenthesisClose(token.type) ||
-            (isWordlike(token.type) && isWordlike(tokens[i+1].type))
+            (isWordlike(token.type) && isWordlike(tokens[i+1].type)) ||
+            (isWordlike(token.type) && isString(tokens[i+1].type)) ||
+            (isString(token.type) && isWordlike(tokens[i+1].type))
         ){
             result += ' ';
         }

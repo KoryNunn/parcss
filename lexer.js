@@ -11,7 +11,7 @@ function lexString(source){
     while (source.charAt(++index) !== startChar)
     {
        if(index >= source.length){
-               throw "Unclosed string";
+               throw 'Unclosed string';
        }
        if (source.charAt(index) === '\\' && source.charAt(index+1) === startChar) {
                source = source.slice(0, index) + source.slice(index + 1);
@@ -215,12 +215,14 @@ function lex(source, memoisedTokens) {
 
 
         if(source.length === previousLength){
-            throw "Syntax error: Unable to determine next token in source: " + source.slice(0, 100);
+            throw 'Syntax error: Unable to determine next token in source: ' + source.slice(0, 100);
         }
 
     } while (source);
 
-    memoisedTokens && (memoisedTokens[originalSource] = tokens.slice());
+    if(memoisedTokens){
+        memoisedTokens[originalSource] = tokens.slice();
+    }
 
     return tokens;
 }

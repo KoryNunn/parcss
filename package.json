@@ -30,5 +30,15 @@
   },
   "devDependencies": {
     "grape": "^1.0.1"
-  }
+  },
+  "keywords": [
+    "parse",
+    "css",
+    "minify",
+    "minification",
+    "optimise",
+    "optimize",
+    "lex",
+    "render"
+  ]
 }
