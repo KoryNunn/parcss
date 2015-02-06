@@ -1,4 +1,4 @@
-var test = require('grape'),
+var test = require('tape'),
     lex = require('../lexer'),
     parse = require('../parser'),
     optimise = require('../optimiser'),
@@ -28,41 +28,41 @@ test('parse function', function(t){
         parsed = parse(lexed);
 
     t.deepEqual(JSON.parse(JSON.stringify(parsed)), [
-        {  
+        {
             "type":"block",
-            "content":[  
-                {  
+            "content":[
+                {
                     "type":"statement",
                     "property":"transform",
-                    "valueTokens":[  
-                        {  
+                    "valueTokens":[
+                        {
                             "type":"function",
-                            "arguments":[  
-                                {  
+                            "arguments":[
+                                {
                                     "type":"word",
                                     "source":"-10%",
                                     "length":4,
                                     "index":34
                                 },
-                                {  
+                                {
                                     "type":"comma",
                                     "source":",",
                                     "length":1,
                                     "index":38
                                 },
-                                {  
+                                {
                                     "type":"word",
                                     "source":"0",
                                     "length":1,
                                     "index":39
                                 },
-                                {  
+                                {
                                     "type":"comma",
                                     "source":",",
                                     "length":1,
                                     "index":40
                                 },
-                                {  
+                                {
                                     "type":"word",
                                     "source":"0",
                                     "length":1,
@@ -74,7 +74,7 @@ test('parse function', function(t){
                     ]
                 }
             ],
-            "selectors":[  
+            "selectors":[
                 "#thing"
             ]
         }
@@ -88,43 +88,43 @@ test('optimise function', function(t){
         parsed = parse(lexed),
         optimised = optimise(parsed);
 
-    t.deepEqual(JSON.parse(JSON.stringify(optimised)), [  
-        {  
+    t.deepEqual(JSON.parse(JSON.stringify(optimised)), [
+        {
             "type":"selectorBlock",
-            "selectors":[  
+            "selectors":[
                 "#thing"
             ],
-            "properties":{  
-                "transform":[  
-                    [  
-                        {  
+            "properties":{
+                "transform":[
+                    [
+                        {
                             "type":"function",
-                            "arguments":[  
-                                {  
+                            "arguments":[
+                                {
                                     "type":"word",
                                     "source":"-10%",
                                     "length":4,
                                     "index":34
                                 },
-                                {  
+                                {
                                     "type":"comma",
                                     "source":",",
                                     "length":1,
                                     "index":38
                                 },
-                                {  
+                                {
                                     "type":"word",
                                     "source":"0",
                                     "length":1,
                                     "index":39
                                 },
-                                {  
+                                {
                                     "type":"comma",
                                     "source":",",
                                     "length":1,
                                     "index":40
                                 },
-                                {  
+                                {
                                     "type":"word",
                                     "source":"0",
                                     "length":1,

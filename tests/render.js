@@ -1,4 +1,4 @@
-var test = require('grape'),
+var test = require('tape'),
     lex = require('../lexer'),
     parse = require('../parser'),
     optimise = require('../optimiser'),
@@ -123,6 +123,19 @@ test('font-face', function(t){
 
     var css = fs.readFileSync(__dirname + '/font-face.css').toString(),
         expectedCss = fs.readFileSync(__dirname + '/font-faceOptimised.css').toString(),
+        lexed = lex(css),
+        parsed = parse(lexed),
+        optimised = optimise(parsed),
+        rendered = render(optimised, '\n', '    ');
+
+    t.equal(rendered, expectedCss);
+});
+
+test('fontSpacing', function(t){
+    t.plan(1);
+
+    var css = fs.readFileSync(__dirname + '/fontSpacing.css').toString(),
+        expectedCss = '.thing{\n    font:200 13px \'Open Sans\';\n}\n',
         lexed = lex(css),
         parsed = parse(lexed),
         optimised = optimise(parsed),

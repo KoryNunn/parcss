@@ -187,7 +187,7 @@ function parseParenthesis(tokens) {
     var functionToken = {
         type: 'function',
         arguments: tokens.splice(firstParenthesisIndex+1, position-firstParenthesisIndex-2)
-    }
+    };
 
     var functionIdentifier = tokens.splice(firstParenthesisIndex-1, 1).pop();
 
@@ -285,7 +285,7 @@ function parse(tokens){
 
             if(parsers[i](tokens, ast)){
                 i = 0;
-            };
+            }
         }
         if(lastLength === tokens.length){
             parseError('unknown token', tokens[0]);

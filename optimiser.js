@@ -42,7 +42,7 @@ function Block(type, selectors, parent, definedRules, properties){
             }
             previousRules.splice(previousRules.indexOf(this),1);
         }
-    }
+    };
 }
 
 function optimiseStatements(block){
@@ -152,9 +152,9 @@ function optimise(ast){
     var ruleset = [];
     var definedRules = {};
 
-    for (var i = 0; i < ast.length; i++) {
+    for(var i = 0; i < ast.length; i++){
         optimiseItem(ast[i], ruleset, definedRules);
-    };
+    }
     optimiseRules(ruleset);
 
     return ruleset;

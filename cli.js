@@ -11,8 +11,7 @@ var options = require('minimist')(process.argv.slice(2)),
     version = options.v || options.version,
     pretty = options.p || options.pretty,
     newline = '',
-    tab = '',
-    result;
+    tab = '';
 
 
 if(version){
