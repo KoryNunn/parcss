@@ -1,4 +1,4 @@
-var test = require('grape'),
+var test = require('tape'),
     lex = require('../lexer'),
     fs = require('fs');
 

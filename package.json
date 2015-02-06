@@ -29,7 +29,7 @@
     "parcss": "./cli.js"
   },
   "devDependencies": {
-    "grape": "^1.0.1"
+    "tape": "^3.5.0"
   },
   "keywords": [
     "parse",

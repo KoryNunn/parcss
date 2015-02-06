@@ -1,4 +1,4 @@
-var test = require('grape'),
+var test = require('tape'),
     lex = require('../lexer'),
     parse = require('../parser'),
     optimise = require('../optimiser'),
